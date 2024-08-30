@@ -1,7 +1,107 @@
-# Reports
-
-Meu Projeto
-
-Clique no link abaixo para abrir o arquivo HTML:
-
-[Abrir Auxilio Plan.html](https://alvesviniciuss.github.io/Reports/Auxilio%20Plan.html)
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Lateral com Logotipo no Centro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-radius: 20px; /* Borda arredondada */
+            background: #fff;
+            width: 80%;
+            max-width: 900px;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-top-left-radius: 20px; /* Borda arredondada no canto superior esquerdo */
+            border-bottom-left-radius: 20px; /* Borda arredondada no canto inferior esquerdo */
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold; /* Texto em negrito */
+            border-radius: 10px; /* Borda arredondada nos botões */
+            transition: background-color 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+        .logo {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top-right-radius: 20px; /* Borda arredondada no canto superior direito */
+            border-bottom-right-radius: 20px; /* Borda arredondada no canto inferior direito */
+        }
+        .logo img {
+            max-width: 100%;
+            height: auto;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        .content p {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <ul>
+                <li><a href="Bundle.html">Bundle</a></li>
+                <li><a href="Distribuicao de Carga.html">Distribuição de Carga</a></li>
+		<li><a href="Movimentacao de Equipamento.html">Movimentação de Equipamento</a></li>
+		<li><a href="Movimentacao de Navio.html">Movimentação de Navio</a></li>
+		<li><a href="Armazenagem.html">Armazenagem</a></li>
+            </ul>
+        </div>
+        <div class="logo">
+            <img src="logotipo.png" alt="Logotipo da Empresa">
+        </div>
+        <div class="content">
+            <h2>Bem-vindo ao AUXILIO PLAN</h2>
+            <p>Selecione uma das opções no menu à esquerda para acessar o sistema desejado.</p>
+            <p>Cada opção leva diretamente para o sistema correspondente.</p>
+        </div>
+    </div>
+</body>
+</html>
