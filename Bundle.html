@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagem de Containers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        header, footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        footer {
+            margin-top: auto;
+        }
+
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button, input[type="file"] {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover, input[type="file"]::file-selector-button:hover {
+            background-color: #1a252f;
+        }
+
+        input[type="file"]::file-selector-button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Contagem de Bundle</h1>
+</header>
+
+<div class="container">
+    <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this.files)">
+    <button onclick="exportTableToExcel('containerTable', 'contagem_de_containers')">Exportar para Excel</button>
+    <table id="containerTable">
+        <thead>
+            <tr>
+                <th>Posição</th>
+                <th>Container</th>
+                <th>ISO</th>
+                <th>Quantidade de Containers</th>
+            </tr>
+        </thead>
+        <tbody id="containerBody">
+        </tbody>
+    </table>
+</div>
+
+<footer>
+    <p>&copy; 2024 Excelência Operacional Sepetiba Tecon. Todos os direitos reservados.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+<script>
+    function handleFile(files) {
+        const file = files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+
+            console.log("JSON Data:", jsonData); // Debug: Exibe os dados JSON lidos
+
+            const containerCount = {};
+            const trueBundleContainers = {};
+            const isoCodes = {}; // Novo: Objeto para armazenar códigos ISO
+
+            for (let i = 1; i < jsonData.length; i++) {
+                const position = jsonData[i][0];
+                const container = jsonData[i][1];
+                const isoCode = jsonData[i][3]; // Novo: Código ISO na coluna D
+                const isBundleTrue = jsonData[i][2] === true || jsonData[i][2] === "true";
+
+                if (!containerCount[position]) {
+                    containerCount[position] = 1;
+                } else {
+                    containerCount[position]++;
+                }
+
+                if (isBundleTrue) {
+                    trueBundleContainers[position] = container;
+                }
+
+                isoCodes[position] = isoCode; // Novo: Armazena o código ISO
+            }
+
+            console.log("Container Count:", containerCount); // Debug: Exibe a contagem de containers por posição
+            console.log("True Bundle Containers:", trueBundleContainers); // Debug: Exibe os containers com bundle = true
+            console.log("ISO Codes:", isoCodes); // Debug: Exibe os códigos ISO
+
+            const containerBody = document.getElementById('containerBody');
+            containerBody.innerHTML = '';
+            Object.keys(containerCount).forEach(position => {
+                if (containerCount[position] > 1 && trueBundleContainers[position]) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${position}</td>
+                        <td>${trueBundleContainers[position]}</td>
+                        <td>${isoCodes[position]}</td> <!-- Novo: Exibe o código ISO -->
+                        <td>${containerCount[position]}</td>
+                    `;
+                    containerBody.appendChild(row);
+                }
+            });
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
+    function exportTableToExcel(tableID, filename = ''){
+        const table = document.getElementById(tableID);
+        const workbook = XLSX.utils.table_to_book(table, {sheet: "Sheet1"});
+        const wbout = XLSX.write(workbook, {bookType: 'xlsx', type: 'binary'});
+
+        function s2ab(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        const blob = new Blob([s2ab(wbout)], {type: "application/octet-stream"});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename ? `${filename}.xlsx` : 'download.xlsx';
+        link.click();
+    }
+</script>
+
+</body>
+</html>

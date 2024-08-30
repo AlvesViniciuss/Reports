@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuição de Carga do Navio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Distribuição de Carga do Navio</h1>
+        
+        <div class="file-upload">
+            <label for="embarque-file">Arquivo de Embarque:</label>
+            <input type="file" id="embarque-file">
+        </div>
+        
+        <div class="file-upload">
+            <label for="descarga-file">Arquivo de Descarga:</label>
+            <input type="file" id="descarga-file">
+        </div>
+        
+        <div class="posicao-navio">
+            <label>Posição do Navio:</label>
+            <label><input type="radio" name="posicao-navio" value="bombordo" checked> Bombordo</label>
+            <label><input type="radio" name="posicao-navio" value="boreste"> Boreste</label>
+        </div>
+        
+        <button onclick="processFiles()">Calcular Distribuição</button>
+    
+        <div class="resultados">
+            <h2>Resultados:</h2>
+            <div class="imagem-wrapper">
+                <div class="quadrante superior-esquerda">
+                    <span id="deck-terra">Deck Terra: 0%</span>
+                </div>
+                <div class="quadrante superior-direita">
+                    <span id="deck-mar">Deck Mar: 0%</span>
+                </div>
+                <div class="quadrante inferior-esquerda">
+                    <span id="porao-terra">Porão Terra: 0%</span>
+                </div>
+                <div class="quadrante inferior-direita">
+                    <span id="porao-mar">Porão Mar: 0%</span>
+                </div>
+                <img src="naviobay.png" alt="Imagem quadrada">
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 Excelência Operacional Sepetiba Tecon. Todos os direitos reservados.</p>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

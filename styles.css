@@ -1,0 +1,145 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f3f3;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    position: relative; /* Adicionamos position: relative para a .container */
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.file-upload {
+    margin-bottom: 15px;
+}
+
+.file-upload label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+input[type="file"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.posicao-navio {
+    margin-bottom: 20px;
+}
+
+.posicao-navio label {
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.resultados {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.resultados h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.resultados p {
+    margin-bottom: 5px;
+}
+
+.resultados span {
+    font-weight: bold;
+    color: #000; /* Texto preto para melhor legibilidade */
+}
+
+.imagem-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.quadrante {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    overflow: hidden;
+}
+
+.quadrante span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    color: #000; /* Texto preto para melhor legibilidade */
+    font-size: 14px;
+    text-align: center;
+    pointer-events: none;
+}
+
+.superior-esquerda {
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 128, 0, 0.7); /* Verde para Deck Terra */
+}
+
+.superior-direita {
+    top: 0;
+    right: 0;
+    background-color: rgba(255, 255, 0, 0.7); /* Amarelo para Deck Mar */
+}
+
+.inferior-esquerda {
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 165, 0, 0.7); /* Laranja para Porão Terra */
+}
+
+.inferior-direita {
+    bottom: 0;
+    right: 0;
+    background-color: rgba(255, 0, 0, 0.7); /* Vermelho para Porão Mar */
+}
+
+.imagem-wrapper img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.footer {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666;
+}

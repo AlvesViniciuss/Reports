@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contabilidade Diária de Equipamentos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input[type="file"],
+        .form-group input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .results-container {
+            margin-top: 20px;
+        }
+
+        .results-section {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+        }
+
+        .chart-container {
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Movimentação de Pátio</h1>
+        <div class="form-group">
+            <label for="fileInput">Upload do Arquivo CSV:</label>
+            <input type="file" id="fileInput" accept=".csv">
+        </div>
+        <div class="form-group">
+            <label for="dateFilter">Filtrar por Data:</label>
+            <input type="date" id="dateFilter">
+        </div>
+        <button onclick="processCSV()">Processar CSV</button>
+        <button onclick="generatePDF()">Gerar Relatório em PDF</button>
+        <button onclick="generateExcel()">Gerar Relatório em Excel</button> <!-- Novo botão para gerar Excel -->
+
+        <div class="results-container">
+            <div class="results-section">
+                <h2>Produção Total</h2>
+                <table id="totalResultTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="results-section">
+                <h2>Produção por Operador</h2>
+                <table id="operatorResultTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="results-section">
+                <h2>Produção por Turno</h2>
+                <table id="shiftResultTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="results-section">
+                <h2>Taxa de Utilização dos Equipamentos</h2>
+                <div class="chart-container">
+                    <canvas id="utilizationChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script> <!-- Biblioteca jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script> <!-- Biblioteca jsPDF AutoTable -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script> <!-- Biblioteca SheetJS -->
+    <script src="script_moveequip.js"></script>
+    <script src="script_generate_pdf.js"></script> <!-- Novo script para gerar PDF -->
+    <script src="script_generate_excel.js"></script> <!-- Novo script para gerar Excel -->
+</body>
+</html>

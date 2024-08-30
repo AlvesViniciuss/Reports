@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque de Containers</title>
+    <!-- Adicione a biblioteca SheetJS para exportação para Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        input[type="file"],
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Armazenagem</h1>
+    
+    <!-- Input para carregar o arquivo CSV -->
+    <input type="file" id="csvFileInput" accept=".csv" />
+    <button onclick="processCSV()">Calcular Estoque</button>
+    
+    <!-- Botão para exportar para Excel -->
+    <button onclick="exportToExcel()">Exportar para Excel</button>
+
+    <!-- Div onde os resultados serão exibidos -->
+    <div id="results"></div>
+
+    <script>
+        function processCSV() {
+            const input = document.getElementById('csvFileInput');
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const data = parseCSV(text);
+                const stockData = calculateStockByDayAndClient(data);
+                displayResults(stockData);
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(',');
+            const rows = lines.slice(1).map(line => {
+                const values = line.split(',');
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header.trim()] = values[index].trim();
+                });
+                return row;
+            });
+            return rows;
+        }
+
+        // Função para converter datas no formato dd/MM/yyyy para um objeto Date do JavaScript
+        function parseDateBr(dateStr) {
+            const [day, month, year] = dateStr.split('/').map(part => parseInt(part, 10));
+            return new Date(year, month - 1, day); // Mês em JavaScript é 0-indexado
+        }
+
+        function calculateStockByDayAndClient(data) {
+            const stock = {};
+
+            data.forEach(entry => {
+                const cliente = entry['Line Op'];
+                const timeIn = parseDateBr(entry['Time In'].split(' ')[0]); // Converter 'Time In' para o formato de data correto
+                const loaded = entry['Loaded'] ? parseDateBr(entry['Loaded'].split(' ')[0]) : null; // Converter 'Loaded' para data ou definir como null
+
+                let currentDate = new Date(timeIn);
+
+                // Se o container ainda estiver no estoque (sem data de Loaded), consideramos até hoje
+                const endDate = loaded || new Date();
+
+                while (currentDate <= endDate) {
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    if (!stock[dateStr]) stock[dateStr] = {};
+                    if (!stock[dateStr][cliente]) stock[dateStr][cliente] = 0;
+                    
+                    stock[dateStr][cliente]++;
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            });
+
+            return stock;
+        }
+
+        function displayResults(stockData) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = ''; // Limpar resultados anteriores
+
+            // Criar uma tabela para mostrar os resultados
+            const table = document.createElement('table');
+            table.border = '1';
+            table.id = 'resultTable'; // Adicionado ID para facilitar a exportação
+
+            // Cabeçalho da tabela
+            const headerRow = document.createElement('tr');
+            const dateHeader = document.createElement('th');
+            dateHeader.innerText = 'Data';
+            headerRow.appendChild(dateHeader);
+
+            // Obter lista única de todos os clientes
+            const allClients = new Set();
+            for (const clients of Object.values(stockData)) {
+                Object.keys(clients).forEach(client => allClients.add(client));
+            }
+
+            allClients.forEach(client => {
+                const clientHeader = document.createElement('th');
+                clientHeader.innerText = client;
+                headerRow.appendChild(clientHeader);
+            });
+
+            table.appendChild(headerRow);
+
+            // Ordenar as datas em ordem crescente
+            const sortedDates = Object.keys(stockData).sort((a, b) => new Date(a) - new Date(b));
+
+            // Preencher a tabela com os dados ordenados
+            for (const date of sortedDates) {
+                const clients = stockData[date];
+                const row = document.createElement('tr');
+                
+                const dateCell = document.createElement('td');
+                dateCell.innerText = date;
+                row.appendChild(dateCell);
+
+                allClients.forEach(client => {
+                    const clientCell = document.createElement('td');
+                    clientCell.innerText = clients[client] || 0; // Mostra 0 se não houver dados para o cliente
+                    row.appendChild(clientCell);
+                });
+
+                table.appendChild(row);
+            }
+
+            resultsDiv.appendChild(table);
+        }
+
+        function exportToExcel() {
+            // Obter a tabela HTML
+            const table = document.getElementById('resultTable');
+            
+            // Criar uma nova planilha manualmente para formatar as datas corretamente
+            const ws_data = [];
+            
+            // Adicionar cabeçalho da planilha
+            const headers = ['Data', ...Array.from(new Set([...table.rows[0].cells].slice(1).map(cell => cell.innerText)))];
+            ws_data.push(headers);
+            
+            // Adicionar linhas da tabela
+            for (let i = 1; i < table.rows.length; i++) {
+                const row = table.rows[i];
+                const rowData = [row.cells[0].innerText, ...Array.from(row.cells).slice(1).map(cell => cell.innerText)];
+                ws_data.push(rowData);
+            }
+
+            // Cria a planilha
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            XLSX.utils.book_append_sheet(wb, ws, "Estoque de Containers");
+
+            // Exporta a planilha para Excel
+            XLSX.writeFile(wb, 'Estoque_Containers.xlsx');
+        }
+    </script>
+</body>
+</html>
